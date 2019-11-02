@@ -2,8 +2,19 @@
   box-sizing: border-box;
 }
 
+html {
+  background: url(https://www.farmersalmanac.com/wp-content/uploads/2015/07/Uses-Beer-Remedies-Beauty-A195834535.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  height: 100%;
+  overflow: hidden;
+}
+body {
+  font-family: 'Raleway', sans-serif;
+}
 header {
-  background-color: grey;
   text-align: center;
   margin: 0;
 }
@@ -39,7 +50,7 @@ main {
   font-size: 1.2em;
   width: 100%;
   margin-top: 50px;
-  background-color: grey;
+  background-color: rgba(191, 191, 191, .3);
 }
 
 fieldset {
