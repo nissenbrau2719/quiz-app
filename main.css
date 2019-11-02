@@ -51,12 +51,21 @@ p {
   font-weight: 600;
 }
 
+legend {
+  font-weight: 600;
+  font-size: 1.75em;
+}
+
+.scorekeeping {
+  display: none;
+}
+
 .quiz {
   text-align: center;
   font-size: 1.2em;
   width: 100%;
   margin-top: 50px;
-  background-color: rgba(191, 191, 191, .5);
+  background-color: rgba(230, 230, 230, 0.521);
   border-radius: 10px;
   padding: 10px;
 }
