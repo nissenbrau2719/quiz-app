@@ -119,18 +119,17 @@ const STORE = [
 ]
 
 let scoreTally = 0;
-let questionNum = 1;
-let qIndex = 0;
+let questionIndex = 0;
+const questionNum = questionIndex + 1;
 let picked = "";
-const question = STORE[qIndex].question;
-const option1 = STORE[qIndex].options[0];
-const option2 = STORE[qIndex].options[1];
-const option3 = STORE[qIndex].options[2];
-const option4 = STORE[qIndex].options[3];
-const correctAnswer = STORE[qIndex].answer;
-const startHTML = `<legend>Welcome to the Beer Quiz!</legend>
-<p>Would you like to test your general beer and brewing knowledge?</p>
-<button id='start'>Start Quiz</button>`
+let finalMessage = "";
+const question = STORE[questionIndex].question;
+const option1 = STORE[questionIndex].options[0];
+const option2 = STORE[questionIndex].options[1];
+const option3 = STORE[questionIndex].options[2];
+const option4 = STORE[questionIndex].options[3];
+const correctAnswer = STORE[questionIndex].answer;
+
 
 
 function resetQuiz() {
@@ -141,27 +140,25 @@ function resetQuiz() {
   `);
   $('.js-scorekeeping').addClass('hideScorekeeping');
   scoreTally = 0;
-  questionNum = 1;
-  qIndex = 0;
+  questionIndex = 0;
 }
 
 function generateQuestion() {
-  console.log('ran generateQuestion');
-  // this should render the question/answer set in the form
+  console.log('generated question');
   $('.quiz').html(
     `<fieldset>
       <legend class="js-renderQuestion">${question}</legend>
 
-      <input type="radio" id="${option1}" name="question" class="js-option1">
+      <input type="radio" id="${option1}" name="question" value="${option1}">
       <label for="${option1}">${option1}</label><br>
 
-      <input type="radio" id="${option2}" name="question" class="js-option2">
+      <input type="radio" id="${option2}" name="question" value="${option2}">
       <label for="${option2}">${option2}</label><br>
     
-      <input type="radio" id="${option3}" name="question" class="js-option3">
+      <input type="radio" id="${option3}" name="question" value="${option3}">
       <label for="${option3}">${option3}</label><br>        
 
-      <input type="radio" id="${option4}" name="question" class="js-option4">
+      <input type="radio" id="${option4}" name="question" value="${option4}">
       <label for="${option4}">${option4}</label><br>
 
       <button type="submit" class="submit">Submit</button>
@@ -177,7 +174,7 @@ function showScorekeeping() {
 }
 
 function updateScorekeeping() {
-  console.log('scorekeeping updated');
+  console.log('scorekeeping section updated');
   $('.js-scoreTally').text(scoreTally);
   $('.js-questionNum').text(questionNum);
 }
@@ -188,17 +185,15 @@ function increaseScore() {
 }
 
 function incrementQuestion() {
-  console.log('question completed');
-  questionNum++;
+  questionIndex++;
+  console.log('moved to question number ' + questionNum);
 }
 
 function startQuiz() {
-  console.log('ran startQuiz');
-  // this should add an event listener to the start quiz button, and on click
-  // should render the first question/answer set and submit button in the quiz form. 
-  // it should also render the scorekeeping section on the page
-  $('.quiz').on('click', '#start', function(){
+  console.log('quiz ready');
+  $('.quiz').one('click', '#start', function(event){
     event.preventDefault();
+    console.log('started the quiz')
     generateQuestion();
     showScorekeeping();
     selectAnswer();
@@ -211,6 +206,7 @@ function answeredCorrectly() {
     <legend>You are correct!</legend><br>
     <img class="fit" src="https://www.history.com/.image/c_limit%2Ccs_srgb%2Cq_auto:good%2Cw_860/MTU4NTE1Nzg2MDcwMTA3Mzk0/beer-oldest.webp"
     alt="two glasses of beer in a 'cheers' position">
+    <p>Keep up the good work!</p>
     <button class="js-next">Next Question</button>
   `);
   increaseScore();
@@ -228,39 +224,59 @@ function answeredWrong(){
 
 function selectAnswer() {
   $('.quiz').on('click', 'input[name=question]', function(){
-    alert($('this').text());
+    picked = ($('input[name=question]:checked').val());
   });
 }
 
 function submitAnswer() { 
   console.log('ran submitAnswer');
-  // this should add an event listener to the submit button, and on click should check
-  // to see if the selected answer matches the correct one. it should display an alert 
-  // window notifying if the answer is correct, or one displaying the correct answer 
-  // if it is not correct. the alert window should have the next question button
-  $('form').submit(function(event) {
+  $('form').on('click', '.submit', function(event) {
     event.preventDefault();
-    console.log($('.quiz').children('input[name=question]:checked').val())
-    // if($('.quiz').children('input[name=question]:checked').val() === correctAnswer) {
-    //   answeredCorrectly();
-    // } else {
-    //   answeredWrong();
-    // }
-    
+    if (picked === "") {
+      alert("Please select an answer");
+    } else if (picked === correctAnswer) {
+      answeredCorrectly();
+    } else {
+      answeredWrong();
+    }
+    picked = "";
     });
     
 
   }
 
+function finishedQuiz() {
+  if (scoreTally < 4) {
+    finalMessage = "Do you even like beer?";
+  } else if (scoreTally < 8){
+    finalMessage = "Not bad, you might be a little buzzed though...";
+  } else {
+    finalMessage = "Great job! You must work at a brewery";
+  }
+  $('main').last().remove();
+  $('.js-scorekeeping').addClass('hideScorekeeping');
+  $('.quiz').html(`
+  <legend>You completed the Beer Quiz!</legend>
+  <p>Your final score is ${scoreTally} points</p>
+  <p>${finalMessage}</p>
+  <p>Would you like to try the quiz again?</p>
+  <button class='js-reset'>Restart Quiz</button>
+  `);
+  
+}
 
 function nextQuestion() {
   console.log('ran nextQuestion');
-  // this should have an event listener for the next question button. on click, it should
-  // close the alert window and render the next question/answer set in the form. it should
-  // also update the scorekeeping section to reflect the current score and question number
-  // if you have answered all the questions, this should take you to the ending page with
-  // your final score
-
+  $('form').on('click', '.js-next', function(event){
+    event.preventDefault();
+    incrementQuestion();
+    if(questionNum > STORE.length) {
+      finishedQuiz();
+    } else {
+      updateScorekeeping();
+      generateQuestion(); 
+    }    
+  });
 }
 
 function handleReset() {
@@ -272,11 +288,11 @@ function handleReset() {
 
 function handleQuiz() {
   console.log('ran handleQuiz');
-  //this should run all the previous functions
   resetQuiz();
   handleReset();
   startQuiz();
   submitAnswer();
+  nextQuestion();
 }
 
 $(handleQuiz);
