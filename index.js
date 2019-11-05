@@ -27,7 +27,7 @@ const STORE = [
     answer: "Czech Republic"
   },
   {
-    question: "In which year was the beer can produced?",
+    question: "In which year was the beer can first manufactured?",
     options: [
       "1925",
       "1905",
@@ -40,11 +40,11 @@ const STORE = [
     question: "Lager comes from which German word?",
     options: [
       "Langsam, meaning 'slowly'",
-      "Lagern, meaning 'to STORE'",
+      "Lagern, meaning 'to store'",
       "Lagune, meaning 'lagoon'",
       "Lage, meaning 'position'"
     ],
-    answer: "Lagern, meaning 'to STORE'"
+    answer: "Lagern, meaning 'to store'"
   },
   {
     question: "What does IPA stand for?",
@@ -120,46 +120,43 @@ const STORE = [
 
 let scoreTally = 0;
 let questionIndex = 0;
-const questionNum = questionIndex + 1;
+let questionNum = 1;
 let picked = "";
 let finalMessage = "";
-const question = STORE[questionIndex].question;
-const option1 = STORE[questionIndex].options[0];
-const option2 = STORE[questionIndex].options[1];
-const option3 = STORE[questionIndex].options[2];
-const option4 = STORE[questionIndex].options[3];
-const correctAnswer = STORE[questionIndex].answer;
+let correctAnswer = STORE[questionIndex].answer;
 
 
 
 function resetQuiz() {
   $('.quiz').html(`
-  <legend>Welcome to the Beer Quiz!</legend>
-  <p>Would you like to test your general beer and brewing knowledge?</p>
+  <legend>Welcome to the Brewers' Quiz!</legend>
+  <img class="fit" alt="a lineup of various beer taps" src="http://candiaoaks.com/wp-content/uploads/2018/04/Craft-Beer-Feature.png">
+  <p>Would you like to test the depth of your beer and brewing knowledge?</p>
   <button id='start'>Start Quiz</button>
   `);
   $('.js-scorekeeping').addClass('hideScorekeeping');
   scoreTally = 0;
   questionIndex = 0;
+  questionNum = 1;
 }
 
 function generateQuestion() {
   console.log('generated question');
   $('.quiz').html(
     `<fieldset>
-      <legend class="js-renderQuestion">${question}</legend>
+      <legend class="js-renderQuestion">${STORE[questionIndex].question}</legend>
 
-      <input type="radio" id="${option1}" name="question" value="${option1}">
-      <label for="${option1}">${option1}</label><br>
+      <input type="radio" id="${STORE[questionIndex].options[0]}" name="question" value="${STORE[questionIndex].options[0]}">
+      <label for="${STORE[questionIndex].options[0]}">${STORE[questionIndex].options[0]}</label><br>
 
-      <input type="radio" id="${option2}" name="question" value="${option2}">
-      <label for="${option2}">${option2}</label><br>
+      <input type="radio" id="${STORE[questionIndex].options[1]}" name="question" value="${STORE[questionIndex].options[1]}">
+      <label for="${STORE[questionIndex].options[1]}">${STORE[questionIndex].options[1]}</label><br>
     
-      <input type="radio" id="${option3}" name="question" value="${option3}">
-      <label for="${option3}">${option3}</label><br>        
+      <input type="radio" id="${STORE[questionIndex].options[2]}" name="question" value="${STORE[questionIndex].options[2]}">
+      <label for="${STORE[questionIndex].options[2]}">${STORE[questionIndex].options[2]}</label><br>        
 
-      <input type="radio" id="${option4}" name="question" value="${option4}">
-      <label for="${option4}">${option4}</label><br>
+      <input type="radio" id="${STORE[questionIndex].options[3]}" name="question" value="${STORE[questionIndex].options[3]}">
+      <label for="${STORE[questionIndex].options[3]}">${STORE[questionIndex].options[3]}</label><br>
 
       <button type="submit" class="submit">Submit</button>
     </fieldset>`
@@ -186,6 +183,7 @@ function increaseScore() {
 
 function incrementQuestion() {
   questionIndex++;
+  questionNum++;
   console.log('moved to question number ' + questionNum);
 }
 
@@ -217,7 +215,7 @@ function answeredWrong(){
   $('.quiz').html(`
     <legend>Better luck next time!</legend><br>
     <img class="fit" src="https://lh4.googleusercontent.com/-Un-RwYd9iAU/TxHUAyxj71I/AAAAAAAAOv4/6rMaro9mJGI/s800/_MG_1212.JPG" alt="a spilled beer">
-    <p>The correct answer was ${correctAnswer}</p>
+    <p>The correct answer was ${STORE[questionIndex].answer}</p>
     <button class="js-next">Next Question</button>
   `);
 }
@@ -234,7 +232,7 @@ function submitAnswer() {
     event.preventDefault();
     if (picked === "") {
       alert("Please select an answer");
-    } else if (picked === correctAnswer) {
+    } else if (picked === STORE[questionIndex].answer) {
       answeredCorrectly();
     } else {
       answeredWrong();
@@ -244,21 +242,26 @@ function submitAnswer() {
     
 
   }
-
-function finishedQuiz() {
+  
+function evaluateScore() {
   if (scoreTally < 4) {
     finalMessage = "Do you even like beer?";
   } else if (scoreTally < 8){
     finalMessage = "Not bad, you might be a little buzzed though...";
   } else {
-    finalMessage = "Great job! You must work at a brewery";
+    finalMessage = "Wow, great job! Do you work at a brewery?";
   }
-  $('main').last().remove();
+}
+
+function finishedQuiz() {
+  evaluateScore();
+  $('.js-reset').remove();
   $('.js-scorekeeping').addClass('hideScorekeeping');
   $('.quiz').html(`
   <legend>You completed the Beer Quiz!</legend>
   <p>Your final score is ${scoreTally} points</p>
   <p>${finalMessage}</p>
+  <img class="fit" src="https://bilder.t-online.de/b/86/49/27/84/id_86492784/c_raw/tid_da/cheers-celebration-toast-with-pints-of-beer.jpg" alt="several people raising their beers in a toast">
   <p>Would you like to try the quiz again?</p>
   <button class='js-reset'>Restart Quiz</button>
   `);

@@ -125,6 +125,8 @@ button {
 
   input[type='radio'] {
     transform: scale(1.5);
+    position: relative;
+    bottom: 3px;
   }
 }
 
@@ -144,5 +146,7 @@ button {
 
   input[type='radio'] {
     transform: scale(2);
+    position: relative;
+    bottom: 5px;
   }
 }
